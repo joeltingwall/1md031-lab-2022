@@ -1,1 +1,59 @@
-/*empty*/
+body {
+    font-family: Arial;
+ }
+
+header {
+    height: 200px;
+    overflow: hidden;
+ }
+
+.allergi {
+    font-weight: bold;
+    color: blue;
+ }
+
+#wrapper {
+    grid-template-columns: 3;
+    padding: 10px;
+}
+
+#box {
+    column-width: 30%;
+    padding: 10px;
+    display: inline-block;
+}
+
+ #burgers {
+    background-color: black;
+    width: 750px;
+    color: white;
+    padding: 20px;
+    border: solid black;
+    border-style: dashed;
+ }
+
+ #contact {
+    background-color: white;
+    width: 750px;
+    padding: 20px;
+    border: solid black;
+    border-style: dashed;
+ }
+
+ #headpic {
+    opacity: 0.5;
+    width: 790px;
+ }
+
+ #headtext {
+    position: absolute;
+    margin-top: 50px;
+    margin-left: 50px;
+ }
+
+ button:hover {
+    cursor: pointer;
+    color: green;
+    border: solid black;
+    border-style: dashed;
+ }
