@@ -37,8 +37,8 @@
                <p>This is where you provide neccesary information</p>
                <h3>Delivery information</h3>
                <p>
-                  <label for="name">Full Name</label><br>
-                  <input type="text" id="name" name="fn" required="required" placeholder="Full name">
+                <label for="name">Full Name</label><br>
+                <input type="text" id="name" v-model="fn" required="required" placeholder="Full name">
                </p>
                <p>
                   <label for="email">E-mail</label><br>
@@ -100,7 +100,8 @@ export default {
   data: function () {
     return {
       burgers: menu
-    }
+    }    
+
   },
 
   mounted() {
@@ -126,6 +127,10 @@ export default {
                  );
     }
   }
+
+  // displayOrderInfo() {
+  //  booleanDisplay = true;
+  // }
 }
 </script>
 

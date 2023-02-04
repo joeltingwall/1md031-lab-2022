@@ -7,23 +7,65 @@
   
   <div id="box">
     <h2>{{burger.name}}</h2>
-    <img src="/img/product_dubbel-originalburgare.png" style="width:200px">
+    <!--Amount: {{amountOrdered}}-->
+    <img v-bind:src="burger.img" style="width:200px">
     <ul>
       <li>{{burger.kCal}} kCal</li>
-      <li><section class="allergi">Laktos</section></li>
+      <section v-if="burger.lactose" class="allergi">Laktos</section>
+      <section v-if="burger.gluten" class="allergi">Gluten</section>
       <li>Lökringar</li>
       <li>Nötkött</li>
-      </ul>
-    </div>  
+    </ul> 
+    
+    <button @click="subtractBurger">-</button>
+    Amount: {{amountOrdered}}
+    <button @click="addBurger">+</button>
+    
+    <!--
+    <div id="orders">
+      <button v-on:click="markDone(key)">Klart</button>
+    </div>
+-->
+
+  </div> 
   
   </template>
   
-  <script>
+</script>
+
+Det saknas en stängande hakparentes i metoden addBurger och en stängande klammer i metoden subtractBurger. Korrigerad kod:
+
+<script>
 
   export default {
     name: 'OneBurger',
     props: {
       burger: Object
+    },
+
+    data: function () {
+      return {
+        amountOrdered: 0,
+      }
+    },
+
+    methods: {
+
+      addBurger: function () {
+        this.amountOrdered += 1;
+        this.$emit('orderedBurger', { name:   this.burger.name, 
+                                amount: this.amountOrdered 
+                              });
+    },
+    
+      subtractBurger: function () {
+        if (this.amountOrdered > 0) {
+        this.amountOrdered -= 1;
+        this.$emit('orderedBurger', { name:   this.burger.name, 
+                                amount: this.amountOrdered 
+                              });
+     }
+    },
     }
   }
   

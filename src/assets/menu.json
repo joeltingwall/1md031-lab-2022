@@ -9,16 +9,16 @@
   {
     "name": "Grilled-chicken",
     "kCal": 450,
-    "lactose": true,
-    "gluten": false,
+    "lactose": false,
+    "gluten": true,
     "img": "/img/product_grilled-chicken-burger.png"
   },
 
   {
     "name": "Halloumiburgare",
     "kCal": 950,
-    "lactose": true,
-    "gluten": false,
+    "lactose": false,
+    "gluten": true,
     "img": "/img/product_halloumiburgare2.png"
   }
 ]
