@@ -1,17 +1,5 @@
 <template>
   <div>
-  
-    <!--<div>
-      Burgers
-      <Burger v-for="burger in burgers"
-              v-bind:burger="burger" 
-              v-bind:key="burger.name"/>
-    </div>
-
-    <div id="map" v-on:click="addOrder">
-      click here - eller inte
-    </div>-->
-
     
     <div class="header">
         <h1 id="headtext">Joels Burger Online</h1>
@@ -24,37 +12,47 @@
       <p>This is where you select your burger</p>        
        
       <div id="wrapper">
-          <div id="box" v-for="burger of burgers" :key="burger.name">
-              <Burger :burger="burger" />
+         <!--
+          <div id="box" v-for="burger in burgers" :key="burger.name">
+              <Burger :burger="burger" v-bind:key="burger.name" v-on:orderedBurger="addToOrder($event)"/>
           </div>
+          -->
+          <Burger v-for="burger in burgers"
+                v-bind:burger="burger" 
+                v-bind:key="burger.name"
+                v-on:orderedBurgers="addToOrder($event)"/>
       </div> 
     </div>
 
     <p></p>   
          <section id="contact">
-            <form>
-               <h2>Customer Information</h2>
+            <h2>Customer Information</h2>
                <p>This is where you provide neccesary information</p>
                <h3>Delivery information</h3>
-               <p>
-                <label for="name">Full Name</label><br>
-                <input type="text" id="name" v-model="fn" required="required" placeholder="Full name">
+               
+            
+            <form>
+               <p>            
+                  <label for="name">Full Name</label><br>
+                  <input type="text" id="name" v-model="fullName" required="required" placeholder="Full name">
                </p>
                <p>
                   <label for="email">E-mail</label><br>
-                  <input type="email" id="email" name="em" required="required" placeholder="E-mail address">
+                  <input type="email" id="email" v-model="eMail" required="required" placeholder="E-mail address">
                </p>
-               <p>
+               
+               <!--<p>
                   <label for="street">Street</label><br>
-                  <input type="text" id="email" name="st" required="required" placeholder="Street">
+                  <input type="text" id="email" v-model="streetName" required="required" placeholder="Street">
                </p>
                <p>
                   <label for="number">House</label><br>
-                  <input type="number" id="house" name="no" required="required" placeholder="House">
-               </p>
+                  <input type="number" id="house" v-model="houseNumber" required="required" placeholder="House">
+               </p>-->
+
                <p>
                   <label for="payments">Payment options</label><br>
-                  <select id="payments" name="po">
+                  <select id="payments" v-model="paymentOption">
                       <option>MasterCard</option>
                       <option>Visa</option>
                       <option>American Express</option>
@@ -63,30 +61,41 @@
             
                <p>
                   <label for ="gender">Gender</label><br>
-                  <input type="radio" id="male" name="gender" value="male">
+                  <input type="radio" id="male" v-model="gender" value="male">
                   <label for="male">Male</label>
                </p>
                <p>
-                  <input type="radio" id="female" name="gender" value="female">
+                  <input type="radio" id="female" v-model="gender" value="female">
                   <label for="female">Female</label>
                </p>
                <p>
-                  <input type="radio" id="donotknow" name="gender" value="donotknow">
+                  <input type="radio" id="donotknow" v-model="gender" value="donotknow">
                   <label for="donotknow">I'm not sure</label>
                </p>
+               
                <p>
-                  <button type="submit">
-                     Send Info
+                  <button type="submit" v-on:click="printInformation">
+                     Order Now
                   </button>
                </p>
+
             </form>
+
          </section>
 
-  </div>
+         
+         <div id="mapScroll">
+            <div id="map" v-on:click="setLocation">click here</div>
+            <div id="dot" :style="{left: location.x + 'px',top: location.y + 'px'}">
+            </div>
+            </div>
+         </div>
+         
+
 </template>
 
 <script>
-import Burger from '../components/OneBurger.vue';
+import Burger from '../components/OneBurger.vue'
 import menu from "../assets/menu.json"
 import io from 'socket.io-client'
 const socket = io();
@@ -99,51 +108,87 @@ export default {
 
   data: function () {
     return {
-      burgers: menu
-    }    
-
-  },
-
-  mounted() {
-    this.fetchBurgers();
+      burgers: menu,
+      fullName: "",
+      eMail: "",
+      houseNumber: "",
+      paymentOption: "",
+      gender: "",
+      orderedBurger: {},
+      location: { x: 0, y: 0}
+    }   
   },
 
   methods: {
-    fetchBurgers() {
-    // Hämta innehållet i json-filen och spara i burgers-arrayen
-    },
+   printInformation: function(){
+      
+      console.log(this.fullName, this.eMail, this.paymentOption, this.gender);
+      console.log(this.orderedBurger);
+      console.log(this.location.x, this.location.y);
+      },
     
     getOrderNumber: function () {
       return Math.floor(Math.random()*100000);
-    },
-    addOrder: function (event) {
-      var offset = {x: event.currentTarget.getBoundingClientRect().left,
-                    y: event.currentTarget.getBoundingClientRect().top};
-      socket.emit("addOrder", { orderId: this.getOrderNumber(),
-                                details: { x: event.clientX - 10 - offset.x,
-                                           y: event.clientY - 10 - offset.y },
-                                orderItems: ["Beans", "Curry"]
-                              }
-                 );
-    }
-  }
+      },
 
-  // displayOrderInfo() {
-  //  booleanDisplay = true;
-  // }
+    addOrder: function () {
+        socket.emit("addOrder", { orderId: this.getOrderNumber(),
+                                  details: { x: this.location.x,
+                                            y: this.location.y },
+                                  orderItems: this.orderedBurger,
+                                  personalInfo: {name: this.fullName, email: this.eMail, pay: this.paymentOption, gender: this.gender} 
+                                }
+                  );
+        this.printInformation()
+      },
+
+   setLocation: function (event) {
+        var offset = {x: event.currentTarget.getBoundingClientRect().left,
+                      y: event.currentTarget.getBoundingClientRect().top};
+        this.location.x = event.clientX - 10 - offset.x
+        this.location.y = event.clientY - 10 - offset.y
+      },
+
+    addToOrder: function (event) {
+      this.orderedBurger[event.name] = event.amount;
+      }
+
+   }
 }
+
 </script>
 
 <style>
-body {
-    font-family: Arial;
+  body {
+    font-family: "Droid Serif", sans-serif;
+    background-color: white;
+    margin-left: 20px;
  }
 
-#map {
-    width: 300px;
-    height: 300px;
-    background-color: red;
+#dot {
+    position: absolute;
+    background: red;
+    color: white;
+    border-radius: 10px;
+    width:20px;
+    height:20px;
+    text-align: center;
   }
+
+#map {
+   width: 700px;
+    height: 400px;
+    position: relative;
+    cursor: crosshair;
+    background: url(../../public/img/polacks.jpg);
+    margin: 0;
+    padding: 0;
+  }
+
+#mapScroll {
+  width: 800px;
+  height: 600px;
+}
 
 .header {
     height: 200px;
