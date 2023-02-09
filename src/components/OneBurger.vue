@@ -18,8 +18,7 @@
   </div> 
   
   </template>
-  
-</script>
+
 
 <script>
 
